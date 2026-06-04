@@ -23,7 +23,7 @@ function getClienteById(req, res) {
 );
 
     if (!cliente) {
-        return res.status(404).send({ error: 'Client não encontrada' });
+        return res.status(404).send({ error: 'Cliente não encontrado' });
     }
     res.send(cliente);
 }
@@ -51,7 +51,7 @@ function updateCliente(req, res) {
 
     if(!cliente) {
         return res.status(404).send({
-            error: "Client não encontrado"
+            error: "Cliente não encontrado"
         });
     }
 
