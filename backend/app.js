@@ -3,12 +3,19 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var swaggerUi = require('swagger-ui-express');
+var swaggerDocs = require('./config/swagger');
 
+console.log("API rodando");
+console.log("Swagger:", swaggerDocs);
 var indexRouter = require('./routes/index');
 var clientesRouter = require('./routes/clientes');
 var produtosRouter = require('./routes/produtos');
-
+var pedidosRouter = require('./routes/pedidos');
+var usuariosRouter = require('./routes/usuarios');
+var cors = require('cors');
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -20,9 +27,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(cors());
+
 app.use('/', indexRouter);
 app.use('/clientes', clientesRouter);
 app.use('/produtos', produtosRouter);
+app.use('/pedidos',  pedidosRouter);
+app.use('/usuarios', usuariosRouter);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
