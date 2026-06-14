@@ -42,26 +42,28 @@ function createCliente(req, res) {
 }
 
 //Atualizar Clientes
+// Atualizar Clientes
 function updateCliente(req, res) {
-    
     const clienteId = parseInt(req.params.id);
+    
+    // CORREÇÃO: Alterado de 'id' para 'clienteId'
     const cliente = clientes.find(
-        cliente => cliente.id === id
+        cliente => cliente.id === clienteId 
     );
 
-    if(!cliente) {
+    if (!cliente) {
         return res.status(404).send({
             error: "Cliente não encontrado"
         });
     }
 
-    cliente.nome = req.body.nome;
-    cliente.telefone = req.body.telefone;
-    cliente.endereco = req.body.endereco;
+    // Atualiza apenas se o campo for enviado, mantendo o anterior caso contrário
+    cliente.nome = req.body.nome || cliente.nome;
+    cliente.telefone = req.body.telefone || cliente.telefone;
+    cliente.endereco = req.body.endereco || cliente.endereco;
 
-  res.send(cliente);
+    res.send(cliente);
 }
-
 // Excluir cliente
 function deleteCliente(req, res) {
 

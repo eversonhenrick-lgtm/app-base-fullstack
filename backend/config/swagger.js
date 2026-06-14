@@ -19,7 +19,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'https://silver-carnival-7vqqgj7jrvj9fjrq-3000.app.github.dev',
+        url: 'http://localhost:3000',
         description: 'Servidor local',
       },
     ],

@@ -1,0 +1,109 @@
+body {
+    background: #0b1320;
+    min-height: 100vh;
+}
+
+.hero {
+    height: 450px;
+    position: relative;
+    /* Correção definitiva baseada na sua árvore de arquivos */
+    background-image: url('imagens/pizza-banner.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    /* AJUSTE AQUI: Mudando de branco para o gradiente escuro */
+    background: linear-gradient(to bottom, rgba(11, 19, 32, 0.8), rgba(11, 19, 32, 0.4) 50%, rgba(11, 19, 32, 0.9));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* AJUSTE AQUI: Mudando o texto para branco para dar leitura no fundo escuro */
+    color: white; 
+}
+
+.hero-overlay h1 {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.hero-overlay p {
+    font-size: 1.2rem;
+    font-style: italic;
+}
+
+.painel-principal {
+    background: #0f172a;
+    color: white;
+    margin-top: -80px;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    position: relative;
+    z-index: 10;
+}
+
+.nav-tabs .nav-link {
+    color: white;
+    font-weight: 600;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #ffc107;
+    color: black;
+    border-color: #ffc107;
+}
+
+h3 {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+/* CORREÇÃO 3: Ajuste para garantir compatibilidade com o Dark Mode do Bootstrap 5 */
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: white;
+    color: white;
+}
+
+.table th {
+    color: #ffc107 !important;
+}
+
+.table td {
+    color: white !important;
+}
+
+.form-control {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: white;
+}
+
+.form-control::placeholder {
+    color: #94a3b8;
+}
+
+.form-control:focus {
+    background: #273449;
+    color: white;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25); /* Efeito de foco combinando com o amarelo */
+}
+
+/* CORREÇÃO 2: Alterado de .btn-primary para .btn-warning para bater com o seu HTML */
+.btn-warning {
+    background-color: #ffc107 !important;
+    border-color: #ffc107 !important;
+    color: black !important;
+    font-weight: bold;
+}
+
+/* Adicionado um efeito hover básico para o botão não ficar estático */
+.btn-warning:hover {
+    background-color: #e0a800 !important;
+    border-color: #d39e00 !important;
+}
