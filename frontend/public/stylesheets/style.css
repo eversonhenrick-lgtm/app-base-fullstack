@@ -107,3 +107,22 @@ h3 {
     background-color: #e0a800 !important;
     border-color: #d39e00 !important;
 }
+
+/* ==========================================================================
+   INTEGRAÇÃO DA TELA DE PRODUTOS COM O TEMA DARK/SLATE DO PROJETO
+   ========================================================================== */
+
+/* Define o fundo escuro do sistema para combinar com o .painel-principal */
+.body-sistema-pizzaria {
+    background-color: #0b1320; /* Tom azul-escuro combinando com o gradiente do seu hero */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Garante que o select herde exatamente as mesmas propriedades que você definiu para os inputs */
+select.form-control {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    appearance: none;
+}

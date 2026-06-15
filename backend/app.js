@@ -6,6 +6,15 @@ var logger = require('morgan');
 var swaggerUi = require('swagger-ui-express');
 var swaggerDocs = require('./config/swagger');
 
+// 🔥 CONFIGURAÇÃO DO FIREBASE (FORMATO MODERNO MODULAR)
+const { initializeApp, cert } = require('firebase-admin/app');
+const serviceAccount = require('./firebase-key.json');
+
+initializeApp({
+  credential: cert(serviceAccount)
+});
+// ============================================
+
 console.log("API rodando");
 console.log("Swagger:", swaggerDocs);
 var indexRouter = require('./routes/index');
