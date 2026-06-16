@@ -1,112 +1,202 @@
 const jwt = require("jsonwebtoken");
+const db = require("../firebase");
+
 const SECRET = "minha_chave_secreta";
 
-function login(req, res) {
+
+// 🔐 LOGIN USUÁRIO (igual clientes)
+async function login(req, res) {
     const { email, senha } = req.body;
 
-    const usuario = usuarios.find(
-        usuario => usuario.email === email &&
-                   usuario.senha === senha
-    );
-
-    if (!usuario) {
-        return res.status(401).send({
-            error: "Credenciais inválidas"
+    if (!email || !senha) {
+        return res.status(400).send({
+            error: "E-mail e senha são obrigatórios"
         });
     }
 
-    const token = jwt.sign(
-        {
-            id: usuario.id,
-            nome: usuario.nome,
-            email: usuario.email
-        },
-        SECRET,
-        {
-            expiresIn: "1h"
-        }
-    );
+    try {
+        const snapshot = await db
+            .collection("usuarios")
+            .where("email", "==", email)
+            .get();
 
-    res.send({
-        message: "Login bem-sucedido",
-        token
-    });
-}
-
-const usuarios = [
-    {
-        id: 1,
-        nome: "João Silva",
-        email: "joao.silva@example.com",
-        senha: "123456"
-    }
-];
-//Buscar usuários
-function getUsuarios(req, res) {
-    res.send(usuarios);
-}
-//Buscar usuário por id
-function getUsuarioById(req, res) {
-    const usuarioId = parseInt(req.params.id);
-
-    const usuario = usuarios.find(
-        usuario => usuario.id === usuarioId
-    );
-
-    if(!usuario) {
-        return res.status(404).send({ error: "Usuário não encontrado"});
-
+        if (snapshot.empty) {
+            return res.status(401).send({
+                error: "Credenciais inválidas"
+            });
         }
 
-        res.send(usuario);
-}
+        const doc = snapshot.docs[0];
+        const usuario = doc.data();
 
-//Criar usuário
-function createUsuario(req, res) {
-    const newUsuario = {
-        id: usuarios.length + 1,
-        nome: req.body.nome,
-        email: req.body.email,
-        senha: req.body.senha
-    };
+        // 🔥 AQUI está a correção principal
+        if (usuario.senha !== senha) {
+            return res.status(401).send({
+                error: "Credenciais inválidas"
+            });
+        }
 
-    usuarios.push(newUsuario);
-    res.status(201).send(newUsuario);
-}
+        const token = jwt.sign(
+            {
+                id: doc.id,
+                nome: usuario.nome,
+                email: usuario.email,
+                role: usuario.role || "admin"
+            },
+            SECRET,
+            { expiresIn: "1h" }
+        );
 
-//Atualizar usuário
-function updateUsuario(req, res) {
-    const usuarioId = parseInt(req.params.id);
+        res.send({
+            message: "Login bem-sucedido",
+            token,
+            usuario: {
+                id: doc.id,
+                nome: usuario.nome,
+                email: usuario.email
+            }
+        });
 
-    const usuario = usuarios.find(
-        usuario => usuario.id === usuarioId
-    );
-
-    if(!usuario) {
-        return res.status(404).send({ error: "Usuário não encontrado"});
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({
+            error: "Erro ao realizar login"
+        });
     }
-
-    usuario.nome = req.body.nome;
-    usuario.email = req.body.email;
-    usuario.senha = req.body.senha;
-
-    res.send(usuario);
 }
 
-//Excluir usuário
-function deleteUsuario(req, res) {
-    const usuarioId = parseInt(req.params.id);
 
-    const usuarioIndex = usuarios.findIndex(
-        usuario => usuario.id === usuarioId
-    );
+// 📄 LISTAR USUÁRIOS
+async function getUsuarios(req, res) {
+    try {
+        const snapshot = await db.collection("usuarios").get();
 
-    if(usuarioIndex === -1) {
-        return res.status(404).send({ error: "Usuário não encontrado"});
+        const usuarios = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        res.send(usuarios);
+
+    } catch (err) {
+        res.status(500).send({
+            error: "Erro ao buscar usuários"
+        });
     }
-
-    usuarios.splice(usuarioIndex, 1);
-    res.send({ message: "Usuário excluído com sucesso" });
 }
 
-module.exports = {getUsuarios, getUsuarioById, createUsuario, updateUsuario, deleteUsuario, login};
+
+// 🔎 USUÁRIO POR ID
+async function getUsuarioById(req, res) {
+    try {
+        const doc = await db
+            .collection("usuarios")
+            .doc(req.params.id)
+            .get();
+
+        if (!doc.exists) {
+            return res.status(404).send({
+                error: "Usuário não encontrado"
+            });
+        }
+
+        res.send({
+            id: doc.id,
+            ...doc.data()
+        });
+
+    } catch (err) {
+        res.status(500).send({
+            error: "Erro ao buscar usuário"
+        });
+    }
+}
+
+
+// ➕ CRIAR USUÁRIO
+async function createUsuario(req, res) {
+    try {
+        const novoUsuario = {
+            nome: req.body.nome,
+            email: req.body.email,
+            senha: req.body.senha
+        };
+
+        const docRef = await db
+            .collection("usuarios")
+            .add(novoUsuario);
+
+        res.status(201).send({
+            id: docRef.id,
+            ...novoUsuario
+        });
+
+    } catch (err) {
+        res.status(500).send({
+            error: "Erro ao cadastrar usuário"
+        });
+    }
+}
+
+
+// ✏️ ATUALIZAR USUÁRIO
+async function updateUsuario(req, res) {
+    try {
+        const usuarioId = req.params.id;
+
+        const dadosAtualizados = {};
+
+        if (req.body.nome) dadosAtualizados.nome = req.body.nome;
+        if (req.body.email) dadosAtualizados.email = req.body.email;
+        if (req.body.senha) dadosAtualizados.senha = req.body.senha;
+
+        await db
+            .collection("usuarios")
+            .doc(usuarioId)
+            .update(dadosAtualizados);
+
+        res.send({
+            mensagem: "Usuário atualizado com sucesso",
+            id: usuarioId
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({
+            error: "Erro ao atualizar usuário"
+        });
+    }
+}
+
+
+// ❌ DELETAR USUÁRIO
+async function deleteUsuario(req, res) {
+    try {
+        const usuarioId = req.params.id;
+
+        await db
+            .collection("usuarios")
+            .doc(usuarioId)
+            .delete();
+
+        res.send({
+            mensagem: "Usuário removido com sucesso"
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({
+            error: "Erro ao excluir usuário"
+        });
+    }
+}
+
+
+module.exports = {
+    login,
+    getUsuarios,
+    getUsuarioById,
+    createUsuario,
+    updateUsuario,
+    deleteUsuario
+};

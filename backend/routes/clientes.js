@@ -2,19 +2,67 @@ var express = require('express');
 var router = express.Router();
 var clienteModel = require('../models/cliente.model');
 var verificarToken = require('../middleware/auth');
+const db = require('../firebase');
+
+// 🍕 CARDÁPIO (CLIENTE VÊ ISSO)
+router.get('/cardapio', async (req, res) => {
+    try {
+        const snapshot = await db.collection('produtos').get();
+
+        const produtos = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        res.send(produtos);
+
+    } catch (err) {
+        res.status(500).send({
+            error: "Erro ao buscar cardápio"
+        });
+    }
+});
 
 /**
  * @openapi
+ * /clientes/login:
+ *   post:
+ *     summary: Realiza o login do cliente
+ *     tags:
+ *       - Clientes
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - senha
+ *             properties:
+ *               email:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login realizado com sucesso
+ *       401:
+ *         description: Credenciais inválidas
+ *
  * /clientes:
  *   get:
  *     summary: Lista todos os clientes
- *     tags: [Clientes]
+ *     tags:
+ *       - Clientes
  *     responses:
  *       200:
  *         description: Lista de clientes retornada com sucesso
+ *
  *   post:
  *     summary: Cria um novo cliente
- *     tags: [Clientes]
+ *     tags:
+ *       - Clientes
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -23,7 +71,11 @@ var verificarToken = require('../middleware/auth');
  *         application/json:
  *           schema:
  *             type: object
- *             required: [nome, telefone, endereco]
+ *             required:
+ *               - nome
+ *               - telefone
+ *               - email
+ *               - senha
  *             properties:
  *               nome:
  *                 type: string
@@ -31,29 +83,35 @@ var verificarToken = require('../middleware/auth');
  *                 type: string
  *               endereco:
  *                 type: string
+ *               email:
+ *                 type: string
+ *               senha:
+ *                 type: string
  *     responses:
  *       201:
- *         description: Cliente criado
- *       401:
- *         description: Token inválido ou ausente
+ *         description: Cliente criado com sucesso
+ *
  * /clientes/{id}:
  *   get:
  *     summary: Busca um cliente pelo ID
- *     tags: [Clientes]
+ *     tags:
+ *       - Clientes
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
  *     responses:
  *       200:
  *         description: Cliente encontrado
  *       404:
  *         description: Cliente não encontrado
+ *
  *   put:
  *     summary: Atualiza um cliente
- *     tags: [Clientes]
+ *     tags:
+ *       - Clientes
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -61,7 +119,7 @@ var verificarToken = require('../middleware/auth');
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -75,14 +133,20 @@ var verificarToken = require('../middleware/auth');
  *                 type: string
  *               endereco:
  *                 type: string
+ *               email:
+ *                 type: string
+ *               senha:
+ *                 type: string
  *     responses:
  *       200:
- *         description: Cliente atualizado
- *       401:
- *         description: Token inválido ou ausente
+ *         description: Cliente atualizado com sucesso
+ *       404:
+ *         description: Cliente não encontrado
+ *
  *   delete:
  *     summary: Exclui um cliente
- *     tags: [Clientes]
+ *     tags:
+ *       - Clientes
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -90,35 +154,35 @@ var verificarToken = require('../middleware/auth');
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
  *     responses:
  *       200:
- *         description: Cliente excluído
- *       401:
- *         description: Token inválido ou ausente
+ *         description: Cliente excluído com sucesso
+ *       404:
+ *         description: Cliente não encontrado
  */
 
-/* GET todos os clientes */
+// Nova rota de login do cliente
+router.post('/login', function(req, res) {
+  clienteModel.loginCliente(req, res);
+});
+
 router.get('/', function(req, res) {
   clienteModel.getClientes(req, res);
 });
 
-/* GET cliente por ID */
 router.get('/:id', function(req, res) {
   clienteModel.getClienteById(req, res);
 });
 
-/* POST criar cliente */
 router.post('/', verificarToken, function(req, res) {
   clienteModel.createCliente(req, res);
 });
 
-/* PUT atualizar cliente */
 router.put('/:id', verificarToken, function(req, res) {
   clienteModel.updateCliente(req, res);
 });
 
-/* DELETE excluir cliente */
 router.delete('/:id', verificarToken, function(req, res) {
   clienteModel.deleteCliente(req, res);
 });

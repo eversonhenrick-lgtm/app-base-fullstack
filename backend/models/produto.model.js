@@ -1,90 +1,134 @@
-const produtos = [
-    {
-        id: 1,
-        nome: "Pizza Calabresa",
-        descricao: "Calabresa com cebola",
-        preco: 45.90,
-        categoria: "Pizza"
-    }
-];
+const db = require('../firebase');
 
 //Listar Produtos
-function getProdutos(req, res) {
-    res.send(produtos);
+async function getProdutos(req, res) {
+    try {
+        const snapshot = await db.collection('produtos').get();
+
+        const produtos = [];
+
+        snapshot.forEach(doc => {
+            produtos.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        res.send(produtos);
+
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).send({
+            error: "Erro ao buscar produtos"
+        });
+    }
 }
 
 //Buscar produtos por id
-function getProdutoById(req, res) {
-    const produtoId = parseInt(req.params.id);
+async function getProdutoById(req, res) {
+    try {
+        const produtoId = req.params.id;
 
-    const produto = produtos.find(
-        produto => produto.id === produtoId
-    );
+        const doc = await db.collection('produtos').doc(produtoId).get();
 
-    if(!produto) {
-        return res.status(404).send({
-        error: "Produto não encontrado"
+        if (!doc.exists) {
+            return res.status(404).send({
+                error: "Produto não encontrado"
+            });
+        }
+
+        res.send({
+            id: doc.id,
+            ...doc.data()
+        });
+
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).send({
+            error: "Erro ao buscar produto"
         });
     }
-
-    res.send(produto)
 }
 
 //Criar produto
-function createProduto(req, res) {
-    const newProduto = {
-        id: produtos.length + 1,
-        nome: req.body.nome,
-        descricao: req.body.descricao,
-        preco: req.body.preco,
-        categoria: req.body.categoria
-    };
+async function createProduto(req, res) {
+    try {
+        const novoProduto = {
+            nome: req.body.nome,
+            descricao: req.body.descricao,
+            preco: req.body.preco,
+            categoria: req.body.categoria,
+            imagem: req.body.imagem
+        };
 
-    produtos.push(newProduto);
-    res.status(201).send(newProduto);
+        const docRef = await db.collection('produtos').add(novoProduto);
+
+        res.status(201).send({
+            id: docRef.id,
+            ...novoProduto
+        });
+
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).send({
+            error: "Erro ao cadastrar produto"
+        });
+    }
 }
 
 //Atualizar Produtos
-function updateProduto(req, res) {
-    
-    const produtoId = parseInt(req.params.id);
-    const produto = produtos.find(
-        produto => produto.id === produtoId
-    );
+async function updateProduto(req, res) {
+    try {
+        const produtoId = req.params.id;
 
-    if(!produto) {
-        return res.status(404).send({
-            error: "Produto não encontrado"
+        const dadosAtualizados = {};
+
+        if (req.body.nome) dadosAtualizados.nome = req.body.nome;
+        if (req.body.descricao) dadosAtualizados.descricao = req.body.descricao;
+        if (req.body.preco) dadosAtualizados.preco = req.body.preco;
+        if (req.body.categoria) dadosAtualizados.categoria = req.body.categoria;
+        if (req.body.imagem) dadosAtualizados.imagem = req.body.imagem;
+
+        await db.collection('produtos')
+            .doc(produtoId)
+            .update(dadosAtualizados);
+
+        res.send({
+            mensagem: "Produto atualizado com sucesso",
+            id: produtoId
+        });
+
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).send({
+            error: "Erro ao atualizar produto"
         });
     }
-
-    produto.nome = req.body.nome;
-    produto.descricao = req.body.descricao;
-    produto.preco = req.body.preco;
-    produto.categoria = req.body.categoria;
-
-  res.send(produto);
 }
 //Deletar Produto
-function deleteProduto(req, res) {
+async function deleteProduto(req, res) {
+    try {
+        const produtoId = req.params.id;
 
-    const produtoId = parseInt(req.params.id);
+        await db.collection('produtos')
+            .doc(produtoId)
+            .delete();
 
-    const index = produtos.findIndex(
-        produto => produto.id === produtoId
-    );
+        res.send({
+            mensagem: "Produto removido com sucesso"
+        });
 
-    if (index === -1) {
-        return res.status(404).send({
-            error: "Produto não encontrado"
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).send({
+            error: "Erro ao excluir produto"
         });
     }
-
-    produtos.splice(index, 1);
-
-    res.send({
-        mensagem: "Produto removido"
-    });
 }
 
 module.exports = {getProdutos, getProdutoById, createProduto, updateProduto, deleteProduto}

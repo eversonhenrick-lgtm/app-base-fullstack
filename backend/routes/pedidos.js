@@ -1,35 +1,45 @@
 var express = require('express');
 var router = express.Router();
 var pedidoModel = require('../models/pedido.model');
+var verificarToken = require('../middleware/auth');
 
 /**
  * @openapi
  * /pedidos:
  *   get:
  *     summary: Lista todos os pedidos
- *     tags: [Pedidos]
+ *     tags:
+ *       - Pedidos
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de pedidos retornada com sucesso
+ *
  *   post:
  *     summary: Cria um novo pedido
- *     tags: [Pedidos]
+ *     tags:
+ *       - Pedidos
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required: [cliente, itens]
+ *             required:
+ *               - clienteId
+ *               - itens
  *             properties:
- *               cliente:
+ *               clienteId:
  *                 type: string
  *               itens:
  *                 type: array
  *                 items:
  *                   type: object
  *                   properties:
- *                     produto:
+ *                     produtoId:
  *                       type: string
  *                     quantidade:
  *                       type: integer
@@ -37,79 +47,91 @@ var pedidoModel = require('../models/pedido.model');
  *                       type: number
  *     responses:
  *       201:
- *         description: Pedido criado
+ *         description: Pedido criado com sucesso
+ *
  * /pedidos/{id}:
  *   get:
- *     summary: Busca um pedido pelo ID
- *     tags: [Pedidos]
+ *     summary: Busca pedido por ID
+ *     tags:
+ *       - Pedidos
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
  *     responses:
  *       200:
  *         description: Pedido encontrado
+ *       404:
+ *         description: Pedido não encontrado
+ *
  *   put:
- *     summary: Atualiza o status de um pedido
- *     tags: [Pedidos]
+ *     summary: Atualiza status do pedido
+ *     tags:
+ *       - Pedidos
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required: [status]
  *             properties:
  *               status:
  *                 type: string
  *     responses:
  *       200:
- *         description: Pedido atualizado
+ *         description: Pedido atualizado com sucesso
+ *       404:
+ *         description: Pedido não encontrado
+ *
  *   delete:
- *     summary: Remove um pedido
- *     tags: [Pedidos]
+ *     summary: Exclui pedido
+ *     tags:
+ *       - Pedidos
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
  *     responses:
  *       200:
- *         description: Pedido removido
+ *         description: Pedido removido com sucesso
+ *       404:
+ *         description: Pedido não encontrado
  */
 
-/* GET todos os pedidos */
-router.get('/', function(req, res) {
+router.get('/', verificarToken, (req, res) => {
   pedidoModel.getPedidos(req, res);
 });
 
-/* GET pedido por ID */
-router.get('/:id', function(req, res) {
+router.get('/:id', verificarToken, (req, res) => {
   pedidoModel.getPedidoById(req, res);
 });
 
-/* POST criar pedido */
-router.post('/', function(req, res) {
-  pedidoModel.criarPedido(req, res);
+router.post('/', verificarToken, (req, res) => {
+  pedidoModel.createPedido(req, res);
 });
 
-/* PUT atualizar pedido */
-router.put('/:id', function(req, res) {
-  pedidoModel.atualizarPedido(req, res);
+router.put('/:id', verificarToken, (req, res) => {
+  pedidoModel.updatePedido(req, res);
 });
 
-/* DELETE excluir pedido */
-router.delete('/:id', function(req, res) {
-  pedidoModel.excluirPedido(req, res);
+router.delete('/:id', verificarToken, (req, res) => {
+  pedidoModel.deletePedido(req, res);
 });
 
 module.exports = router;

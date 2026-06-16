@@ -1,21 +1,24 @@
 var express = require('express');
 var router = express.Router();
 var usuarioModel = require('../models/usuario.model');
-const verificarToken = require('../middleware/auth');
+var verificarToken = require('../middleware/auth');
 
 /**
  * @openapi
  * /usuarios/login:
  *   post:
- *     summary: Realiza login de usuário
- *     tags: [Usuários]
+ *     summary: Realiza o login do usuário administrativo
+ *     tags:
+ *       - Usuários
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required: [email, senha]
+ *             required:
+ *               - email
+ *               - senha
  *             properties:
  *               email:
  *                 type: string
@@ -23,28 +26,35 @@ const verificarToken = require('../middleware/auth');
  *                 type: string
  *     responses:
  *       200:
- *         description: Login realizado com sucesso
+ *         description: Login bem-sucedido e retorno do token JWT
  *       401:
  *         description: Credenciais inválidas
+ *
  * /usuarios:
  *   get:
- *     summary: Lista todos os usuários
- *     tags: [Usuários]
+ *     summary: Lista todos os usuários cadastrados
+ *     tags:
+ *       - Usuários
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de usuários retornada com sucesso
+ *
  *   post:
- *     summary: Cria um novo usuário
- *     tags: [Usuários]
- *     security:
- *       - bearerAuth: []
+ *     summary: Cadastra um novo usuário administrativo
+ *     tags:
+ *       - Usuários
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required: [nome, email, senha]
+ *             required:
+ *               - nome
+ *               - email
+ *               - senha
  *             properties:
  *               nome:
  *                 type: string
@@ -54,23 +64,13 @@ const verificarToken = require('../middleware/auth');
  *                 type: string
  *     responses:
  *       201:
- *         description: Usuário criado
+ *         description: Usuário criado com sucesso
+ *
  * /usuarios/{id}:
  *   get:
- *     summary: Busca um usuário pelo ID
- *     tags: [Usuários]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Usuário encontrado
- *   put:
- *     summary: Atualiza um usuário
- *     tags: [Usuários]
+ *     summary: Busca usuário pelo ID
+ *     tags:
+ *       - Usuários
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -78,7 +78,25 @@ const verificarToken = require('../middleware/auth');
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Usuário encontrado
+ *       404:
+ *         description: Usuário não encontrado
+ *
+ *   put:
+ *     summary: Atualiza usuário
+ *     tags:
+ *       - Usuários
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -94,10 +112,14 @@ const verificarToken = require('../middleware/auth');
  *                 type: string
  *     responses:
  *       200:
- *         description: Usuário atualizado
+ *         description: Usuário atualizado com sucesso
+ *       404:
+ *         description: Usuário não encontrado
+ *
  *   delete:
- *     summary: Exclui um usuário
- *     tags: [Usuários]
+ *     summary: Remove usuário
+ *     tags:
+ *       - Usuários
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -105,38 +127,34 @@ const verificarToken = require('../middleware/auth');
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
  *     responses:
  *       200:
- *         description: Usuário excluído
+ *         description: Usuário excluído com sucesso
+ *       404:
+ *         description: Usuário não encontrado
  */
 
-/* POST login */
 router.post('/login', function(req, res) {
   usuarioModel.login(req, res);
 });
 
-/* POST criar usuário */
+router.get('/', verificarToken, function(req, res) {
+  usuarioModel.getUsuarios(req, res);
+});
+
+router.get('/:id', verificarToken, function(req, res) {
+  usuarioModel.getUsuarioById(req, res);
+});
+
 router.post('/', function(req, res) {
   usuarioModel.createUsuario(req, res);
 });
 
-/* GET todos os usuários */
-router.get('/', function(req, res) {
-  usuarioModel.getUsuarios(req, res);
-});
-
-/* GET usuário por ID */
-router.get('/:id', function(req, res) {
-  usuarioModel.getUsuarioById(req, res);
-});
-
-/* PUT atualizar usuário */
 router.put('/:id', verificarToken, function(req, res) {
   usuarioModel.updateUsuario(req, res);
 });
 
-/* DELETE excluir usuário */
 router.delete('/:id', verificarToken, function(req, res) {
   usuarioModel.deleteUsuario(req, res);
 });

@@ -1,94 +1,110 @@
-const pedidos = [
-    {
-    id: 1,
-    cliente: "João Silva",
-    itens: [
-        { produto: "Pizza Margherita", quantidade: 2, preco: 25.00 },
-        { produto: "Coca-Cola", quantidade: 1, preco: 5.00 }
-    ],
-    status: "Recebido",
-    data: "2024-06-01T12:30:00Z",
-    total: 55.00
-    }
-];
+const db = require("../firebase");
 
-//listar pedidos 
-function getPedidos(req, res) {
-    res.send(pedidos);
-}
+const pedidosRef = db.collection("pedidos");
 
-//listar pedido por id
-function getPedidoById(req, res) {
-    const pedidoId = parseInt(req.params.id);
 
-    const pedido = pedidos.find(
-        pedido => pedido.id === pedidoId
-    );
+// ➕ CRIAR PEDIDO
+async function createPedido(req, res) {
+    try {
+        const novoPedido = {
+            clienteId: req.body.clienteId,
+            itens: req.body.itens,
+            total: req.body.total,
+            status: "pendente",
+            criadoEm: new Date()
+        };
 
-    if (!pedido) {
-        return res.status(404).send({ error: "Pedido não encontrado" });
-    }
-    res.send(pedido);
-}
+        const docRef = await pedidosRef.add(novoPedido);
 
-//Criar pedido 
-function criarPedido(req, res) {
-    const newPedido = {
-    id: pedidos.length + 1,
-    cliente: req.body.cliente,
-    itens: req.body.itens,
-    status: "Recebido",
-    data: new Date().toISOString(),
-    total: 0
-};
-
-// Calcular total do pedido
-    let total = 0;
-    newPedido.itens.forEach(item => {
-    total += item.preco * item.quantidade;
-
-});
-
-    newPedido.total = total;
-    pedidos.push(newPedido);
-    res.status(201).send(newPedido);
-}
-
-//Atualizar pedido
-function atualizarPedido(req, res) {
-    const pedidoId = parseInt(req.params.id);
-
-    const pedido = pedidos.find(
-        pedido => pedido.id === pedidoId
-    );
-
-    if(!pedido) {
-        return res.status(404).send({ error: "Pedido não encontrado" });
-    }
-    pedido.status = req.body.status;
-    res.send(pedido);
-    }
-
-//Excluir pedido
-function excluirPedido(req, res) {
-    const pedidoId = parseInt(req.params.id);
-
-    const index = pedidos.findIndex(
-        pedido => pedido.id === pedidoId
-    );
-
-   
-    if (index === -1) {
-        return res.status(404).send({
-            error: "Pedido não encontrado"
+        res.status(201).send({
+            id: docRef.id,
+            ...novoPedido
         });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ error: "Erro ao criar pedido" });
     }
-
-    pedidos.splice(index, 1);
-
-    res.send({
-        mensagem: "Pedido removido"
-    });
 }
 
-module.exports = {getPedidos, getPedidoById, criarPedido, atualizarPedido, excluirPedido}
+
+// 📄 LISTAR PEDIDOS
+async function getPedidos(req, res) {
+    try {
+        const snapshot = await pedidosRef.get();
+
+        const pedidos = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        res.send(pedidos);
+
+    } catch (err) {
+        res.status(500).send({ error: "Erro ao buscar pedidos" });
+    }
+}
+
+
+// 🔎 BUSCAR POR ID
+async function getPedidoById(req, res) {
+    try {
+        const doc = await pedidosRef.doc(req.params.id).get();
+
+        if (!doc.exists) {
+            return res.status(404).send({ error: "Pedido não encontrado" });
+        }
+
+        res.send({
+            id: doc.id,
+            ...doc.data()
+        });
+
+    } catch (err) {
+        res.status(500).send({ error: "Erro ao buscar pedido" });
+    }
+}
+
+
+// ✏️ ATUALIZAR STATUS DO PEDIDO
+async function updatePedido(req, res) {
+    try {
+        const pedidoId = req.params.id;
+
+        const updateData = {};
+
+        if (req.body.status) updateData.status = req.body.status;
+
+        await pedidosRef.doc(pedidoId).update(updateData);
+
+        res.send({
+            message: "Pedido atualizado",
+            id: pedidoId
+        });
+
+    } catch (err) {
+        res.status(500).send({ error: "Erro ao atualizar pedido" });
+    }
+}
+
+
+// ❌ DELETAR PEDIDO
+async function deletePedido(req, res) {
+    try {
+        await pedidosRef.doc(req.params.id).delete();
+
+        res.send({ message: "Pedido removido com sucesso" });
+
+    } catch (err) {
+        res.status(500).send({ error: "Erro ao excluir pedido" });
+    }
+}
+
+
+module.exports = {
+    createPedido,
+    getPedidos,
+    getPedidoById,
+    updatePedido,
+    deletePedido
+};
