@@ -4,27 +4,32 @@ document.getElementById('formLogin').addEventListener('submit', async (event) =>
     const email = document.getElementById('email').value;
     const senha = document.getElementById('senha').value;
 
-    try {
-        // Aponta para a porta 3000 onde o seu BACKEND está rodando a rota de usuários
-        const response = await fetch('http://localhost:3000/usuarios/login', {
+    async function tentarLogin(url) {
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
-            'Content-Type': 'application/json' // <-- ISSO AQUI É OBRIGATÓRIO
-        },
-             body: JSON.stringify({ email: email, senha: senha }) // <-- Transforma em texto JSON
-    });
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, senha })
+        });
 
         const dados = await response.json();
+        return { response, dados, url };
+    }
 
-      if (response.ok) {
-            // 1º Passo: Salva o token para ter permissão de acessar o sistema
-            localStorage.setItem('token', dados.token);
-            
-            // 2º Passo: Redireciona o usuário para o painel
-            window.location.href = '/painel'; 
+    try {
+        let resultado = await tentarLogin('http://localhost:3000/usuarios/login');
+
+        if (!resultado.response.ok) {
+            resultado = await tentarLogin('http://localhost:3000/clientes/login');
+        }
+
+        if (resultado.response.ok) {
+            localStorage.setItem('pizzaria_token', resultado.dados.token);
+            const ehAdmin = resultado.url.includes('/usuarios/login');
+            window.location.href = ehAdmin ? '/painel' : '/cardapio';
         } else {
-            // Exibe o erro caso a senha ou email estejam errados
-            alert(dados.error || 'Erro ao fazer login.');
+            alert(resultado.dados.error || 'Erro ao fazer login.');
         }
     } catch (erro) {
         console.error('Erro na comunicação com a API:', erro);

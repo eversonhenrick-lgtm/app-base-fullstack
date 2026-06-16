@@ -12,4 +12,8 @@ router.get('/painel', function(req, res, next) {
   res.render('index'); // Abre o seu painel de clientes/pedidos após logar
 });
 
+router.get('/cardapio', function(req, res, next) {
+  res.render('cardapio'); // Abre o cardápio para clientes
+});
+
 module.exports = router;

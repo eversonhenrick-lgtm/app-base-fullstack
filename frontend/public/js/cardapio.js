@@ -1,3 +1,21 @@
+function parseJwt(token) {
+    try {
+        const base64Payload = token.split('.')[1];
+        if (!base64Payload) return null;
+        const payload = atob(base64Payload.replace(/-/g, '+').replace(/_/g, '/'));
+        return JSON.parse(payload);
+    } catch {
+        return null;
+    }
+}
+
+function isAdmin() {
+    const token = localStorage.getItem('pizzaria_token');
+    if (!token) return false;
+    const payload = parseJwt(token);
+    return payload?.role === 'admin';
+}
+
 async function carregarCardapio() {
     const lista = document.getElementById("listaProdutos");
 
@@ -17,6 +35,17 @@ async function carregarCardapio() {
         lista.innerHTML = "";
 
         produtos.forEach(produto => {
+            const adminControls = isAdmin() ? `
+                <div class="d-flex gap-2 mt-3">
+                    <button type="button" class="btn btn-outline-warning btn-sm w-100" onclick="editarProduto('${produto.id}')">
+                        Editar
+                    </button>
+                    <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="deletarProduto('${produto.id}')">
+                        Excluir
+                    </button>
+                </div>
+            ` : "";
+
             const card = `
                 <div class="col">
                     <div class="card bg-dark text-white h-100 border-secondary">
@@ -46,6 +75,7 @@ async function carregarCardapio() {
                                 </button>
                             </div>
 
+                            ${adminControls}
                         </div>
                     </div>
                 </div>

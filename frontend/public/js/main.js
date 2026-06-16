@@ -19,6 +19,39 @@ function mostrarSecao(secaoId) {
     });
 }
 
+function parseJwt(token) {
+    try {
+        const base64Payload = token.split('.')[1];
+        if (!base64Payload) return null;
+        const payload = atob(base64Payload.replace(/-/g, '+').replace(/_/g, '/'));
+        return JSON.parse(payload);
+    } catch {
+        return null;
+    }
+}
+
+function getUserRole() {
+    const token = localStorage.getItem('pizzaria_token');
+    if (!token) return null;
+    const payload = parseJwt(token);
+    return payload?.role || null;
+}
+
+function mostrarPainelAdmin() {
+    const painel = document.getElementById('painelAdminProduto');
+    if (!painel) return;
+    painel.style.display = getUserRole() === 'admin' ? 'block' : 'none';
+}
+
+function atualizarNavegacao() {
+    const role = getUserRole();
+    const usuariosBtn = document.querySelector("button[onclick=\"mostrarSecao('usuarios')\"]");
+
+    if (usuariosBtn && usuariosBtn.closest('.nav-item')) {
+        usuariosBtn.closest('.nav-item').style.display = role === 'admin' ? 'block' : 'none';
+    }
+}
+
 
 // ==============================
 // 🔐 TOKEN JWT (ADMIN)
@@ -60,6 +93,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (icon) icon.className = 'fas fa-lock-open text-success';
     }
 
-    // opcional: já abre clientes por padrão
+    mostrarPainelAdmin();
+    atualizarNavegacao();
     mostrarSecao('clientes');
 });
