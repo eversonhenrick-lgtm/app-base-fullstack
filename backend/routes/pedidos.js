@@ -114,6 +114,10 @@ var verificarToken = require('../middleware/auth');
  *         description: Pedido não encontrado
  */
 
+router.get('/cliente/:clienteId', verificarToken, (req, res) => {
+  pedidoModel.getPedidosByCliente(req, res);
+});
+
 router.get('/', verificarToken, (req, res) => {
   pedidoModel.getPedidos(req, res);
 });

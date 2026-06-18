@@ -65,6 +65,33 @@ async function getPedidoById(req, res) {
     }
 }
 
+// 📄 LISTAR PEDIDOS DE UM CLIENTE
+async function getPedidosByCliente(req, res) {
+    try {
+
+        const clienteId = req.params.clienteId;
+
+        const snapshot = await pedidosRef
+            .where("clienteId", "==", clienteId)
+            .get();
+
+        const pedidos = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        res.send(pedidos);
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).send({
+            error: "Erro ao buscar pedidos do cliente"
+        });
+    }
+}
+
 
 // ✏️ ATUALIZAR STATUS DO PEDIDO
 async function updatePedido(req, res) {
@@ -105,6 +132,7 @@ module.exports = {
     createPedido,
     getPedidos,
     getPedidoById,
+    getPedidosByCliente,
     updatePedido,
     deletePedido
 };

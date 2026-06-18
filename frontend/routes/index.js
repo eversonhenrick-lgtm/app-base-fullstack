@@ -16,4 +16,9 @@ router.get('/cardapio', function(req, res, next) {
   res.render('cardapio'); // Abre o cardápio para clientes
 });
 
+/* Meus Pedidos */
+router.get('/meus-pedidos', function(req, res, next) {
+  res.render('meus-pedidos');
+});
+
 module.exports = router;

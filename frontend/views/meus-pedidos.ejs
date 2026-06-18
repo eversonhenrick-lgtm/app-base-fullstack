@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Pedidos - Pizzaria</title>
+
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container py-5">
+
+    <!-- HEADER -->
+    <div class="header-cardapio d-flex justify-content-between align-items-center mb-4">
+
+        <div style="width:120px;"></div>
+
+        <div class="text-center">
+
+            <h1 class="titulo-cardapio mb-1">
+                📦 Meus Pedidos
+            </h1>
+
+            <p class="subtitulo-cardapio mb-0">
+                Acompanhe seus pedidos em tempo real
+            </p>
+
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="/cardapio"
+                class="btn btn-outline-secondary shadow-sm"
+            >
+                ← Cardápio
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- RESUMO (opcional visual futuro) -->
+    <div class="row mb-4">
+
+        <div class="col-md-12">
+
+            <div class="info-cardapio text-center">
+
+                <h5 class="mb-1">
+                    🍕 Histórico de pedidos
+                </h5>
+
+                <p class="mb-0 text-muted">
+                    Veja todos os seus pedidos e seus status atualizados
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- LISTA DE PEDIDOS -->
+    <div
+        id="listaPedidos"
+        class="row row-cols-1 row-cols-md-2 g-4"
+    >
+
+        <!-- JS vai renderizar aqui -->
+
+        <p class="text-muted">
+            Carregando pedidos...
+        </p>
+
+    </div>
+
+</div>
+
+<script src="/js/meus-pedidos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

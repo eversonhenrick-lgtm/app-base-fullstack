@@ -14,14 +14,14 @@
 
 <div class="container py-5">
 
-    <!-- Cabeçalho -->
-    <div class="d-flex justify-content-between align-items-center mb-5">
+    <!-- HEADER -->
+    <div class="header-cardapio d-flex justify-content-between align-items-center mb-5">
 
         <div style="width:120px;"></div>
 
         <div class="text-center">
 
-            <h1 class="titulo-cardapio">
+            <h1 class="titulo-cardapio mb-1">
                 🍕 Cardápio
             </h1>
 
@@ -33,36 +33,38 @@
 
         <div class="d-flex gap-2">
 
-    <a
-        href="/meus-pedidos"
-        class="btn btn-outline-primary"
-    >
-        📦 Meus Pedidos
-    </a>
-
-        <button
-            class="btn btn-warning position-relative"
-            id="btnCarrinho"
-            type="button"
-        >
-            🛒 Carrinho
-
-            <span
-                id="contadorCarrinho"
-                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+            <a
+                href="/meus-pedidos"
+                class="btn btn-outline-primary shadow-sm"
             >
-                0
-            </span>
+                📦 Meus Pedidos
+            </a>
 
-        </button>
+            <button
+                class="btn btn-warning position-relative shadow-sm"
+                id="btnCarrinho"
+                type="button"
+                aria-label="Abrir carrinho"
+            >
+                🛒 Carrinho
+
+                <span
+                    id="contadorCarrinho"
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                >
+                    0
+                </span>
+
+            </button>
+
+        </div>
 
     </div>
-    </div>
 
-    <!-- Filtros -->
+    <!-- FILTROS -->
     <div class="d-flex justify-content-center gap-3 flex-wrap mb-4">
 
-        <button class="btn btn-warning filtro-btn">
+        <button class="btn btn-warning filtro-btn active">
             Todas
         </button>
 
@@ -76,41 +78,42 @@
 
     </div>
 
-    <!-- Busca -->
+    <!-- BUSCA -->
     <div class="row justify-content-center mb-5">
 
         <div class="col-md-6">
 
             <input
                 type="text"
-                class="form-control form-control-lg"
+                class="form-control form-control-lg shadow-sm"
                 id="buscarProduto"
-                placeholder="🔍 Buscar produto..."
+                placeholder="🔍 Buscar pizza, bebida ou sobremesa..."
+                autocomplete="off"
             >
 
         </div>
 
     </div>
 
-    <!-- Produtos -->
+    <!-- PRODUTOS -->
     <div
         id="listaProdutos"
         class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
     >
     </div>
 
-    <!-- Informações -->
+    <!-- INFO -->
     <div class="info-cardapio mt-5">
 
         <div class="row align-items-center">
 
             <div class="col-md-6">
 
-                <h4>
+                <h4 class="mb-1">
                     🚚 Entrega rápida e segura!
                 </h4>
 
-                <p class="mb-0">
+                <p class="mb-0 text-muted">
                     Peça suas pizzas favoritas no conforto da sua casa.
                 </p>
 
@@ -118,12 +121,12 @@
 
             <div class="col-md-6 text-md-end mt-3 mt-md-0">
 
-                <strong class="me-4">
+                <strong class="me-3">
                     🔒 Pagamento seguro
                 </strong>
 
                 <strong>
-                    💳 Aceitamos PIX e Cartão
+                    💳 PIX e Cartão
                 </strong>
 
             </div>
@@ -134,7 +137,7 @@
 
 </div>
 
-<!-- Modal Carrinho -->
+<!-- MODAL CARRINHO -->
 <div
     class="modal fade"
     id="modalCarrinho"
@@ -156,6 +159,7 @@
                     type="button"
                     class="btn-close"
                     data-bs-dismiss="modal"
+                    aria-label="Fechar"
                 ></button>
 
             </div>
@@ -164,7 +168,7 @@
 
                 <div id="itensCarrinho">
 
-                    <p class="text-muted">
+                    <p class="text-muted mb-0">
                         Seu carrinho está vazio.
                     </p>
 
@@ -178,8 +182,8 @@
                     Total: R$ 0,00
                 </strong>
 
-                <button
-                    class="btn btn-success"
+                <button     
+                    class="btn btn-success shadow-sm"
                     id="btnFinalizarPedido"
                 >
                     Finalizar Pedido
@@ -192,6 +196,7 @@
     </div>
 
 </div>
+
 <script src="/js/carrinho.js"></script>
 <script src="/js/cardapio.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

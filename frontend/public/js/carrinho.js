@@ -45,6 +45,7 @@ function adicionarCarrinho(produto) {
 
         carrinho.push({
             ...produto,
+            preco: Number(produto.preco), // 🔥 FIX IMPORTANTE
             quantidade: 1
         });
     }
@@ -96,8 +97,8 @@ function renderizarCarrinho() {
     carrinho.forEach((produto, index) => {
 
         total +=
-                Number(produto.preco) *
-                Number(produto.quantidade);
+            Number(produto.preco) *
+            Number(produto.quantidade); // 🔥 FIX GARANTIDO
 
         itensCarrinho.innerHTML += `
             <div class="d-flex justify-content-between align-items-center border-bottom py-2">
@@ -185,15 +186,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const payload = parseJwt(token);
 
+                if (!payload || !payload.id) {
+                    alert('Sessão inválida. Faça login novamente.');
+                    return;
+                }
+
                 const total = carrinho.reduce(
-                    (soma, item) => soma + (Number(item.preco) * Number(item.quantidade)),
+                    (soma, item) =>
+                        soma + (Number(item.preco) * Number(item.quantidade)),
                     0
                 );
 
+                const itensFormatados = carrinho.map(item => ({
+                    produtoId: item.id,
+                    nome: item.nome,
+                    preco: Number(item.preco), // 🔥 FIX
+                    quantidade: Number(item.quantidade) // 🔥 FIX
+                }));
+
                 const pedido = {
                     clienteId: payload.id,
-                    itens: carrinho,
-                    total: total
+
+                    itens: itensFormatados,
+
+                    total: Number(total), // 🔥 FIX
+
+                    status: "pendente",
+
+                    createdAt: new Date().toISOString()
                 };
 
                 const response = await fetch(
@@ -228,14 +248,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 renderizarCarrinho();
 
+                setTimeout(() => {
+                    window.location.href = '/meus-pedidos';
+                }, 500);
+
             } catch (erro) {
 
                 console.error(erro);
 
-                alert(
-                    'Erro ao conectar com o servidor.'
-                );
+                alert('Erro ao conectar com o servidor.');
             }
         });
     }
+
 });
