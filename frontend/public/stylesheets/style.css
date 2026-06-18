@@ -1,12 +1,20 @@
+/* =====================================================
+   BASE
+===================================================== */
+
 body {
-    background: #0b1320;
+    background: #f4f6f9;
     min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* =====================================================
+   HERO
+===================================================== */
+
 .hero {
-    height: 450px;
+    height: 350px;
     position: relative;
-    /* Correção definitiva baseada na sua árvore de arquivos */
     background-image: url('imagens/pizza-banner.jpg');
     background-size: cover;
     background-position: center;
@@ -16,72 +24,122 @@ body {
 .hero-overlay {
     position: absolute;
     inset: 0;
-    /* AJUSTE AQUI: Mudando de branco para o gradiente escuro */
-    background: linear-gradient(to bottom, rgba(11, 19, 32, 0.8), rgba(11, 19, 32, 0.4) 50%, rgba(11, 19, 32, 0.9));
+
+    background: linear-gradient(
+        to bottom,
+        rgba(11, 19, 32, .85),
+        rgba(11, 19, 32, .55),
+        rgba(11, 19, 32, .9)
+    );
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    /* AJUSTE AQUI: Mudando o texto para branco para dar leitura no fundo escuro */
-    color: white; 
+
+    color: white;
+    text-align: center;
 }
 
 .hero-overlay h1 {
-    font-size: 3rem;
-    font-weight: bold;
+    font-size: 3.5rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 10px rgba(0,0,0,.5);
 }
 
 .hero-overlay p {
     font-size: 1.2rem;
-    font-style: italic;
+    opacity: .95;
 }
 
+/* =====================================================
+   PAINEL
+===================================================== */
+
 .painel-principal {
-    background: #0f172a;
-    color: white;
-    margin-top: -80px;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    margin-top: -70px;
     position: relative;
     z-index: 10;
 }
 
-.nav-tabs .nav-link {
-    color: white;
-    font-weight: 600;
+/* =====================================================
+   CARDS
+===================================================== */
+
+.produto-card {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  transition: 0.3s;
 }
 
-.nav-tabs .nav-link.active {
-    background-color: #ffc107;
-    color: black;
-    border-color: #ffc107;
+.produto-card:hover {
+  transform: translateY(-5px);
 }
+
+.produto-card h3 {
+  font-size: 1.3rem;
+  margin-top: 10px;
+}
+
+.produto-card p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* =====================================================
+   MENU
+===================================================== */
+
+.nav-pills {
+    background: white;
+    padding: 15px;
+    border-radius: 20px;
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,.08);
+}
+
+.nav-pills .nav-link {
+    border-radius: 12px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.nav-pills .nav-link:hover {
+    background: #f1f5f9;
+}
+
+.nav-pills .nav-link.active {
+    background: #0d6efd;
+    color: white;
+}
+
+/* =====================================================
+   TITULOS
+===================================================== */
 
 h3 {
     color: #ffc107;
     font-weight: bold;
 }
 
-/* CORREÇÃO 3: Ajuste para garantir compatibilidade com o Dark Mode do Bootstrap 5 */
-.table {
-    --bs-table-bg: transparent;
-    --bs-table-color: white;
-    color: white;
-}
-
-.table th {
+.text-warning {
     color: #ffc107 !important;
 }
 
-.table td {
-    color: white !important;
-}
+/* =====================================================
+   FORMULÁRIOS
+===================================================== */
 
 .form-control {
-    background: #1e293b;
-    border: 1px solid #334155;
-    color: white;
+    background: #f8fafc;
+    border: 1px solid #dbe2ea;
+    color: #0f172a;
+
+    border-radius: 12px;
+    padding: 12px;
 }
 
 .form-control::placeholder {
@@ -89,42 +147,133 @@ h3 {
 }
 
 .form-control:focus {
-    background: #273449;
-    color: white;
-    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25); /* Efeito de foco combinando com o amarelo */
+    background: white;
+    color: #0f172a;
+
+    border-color: #ffc107;
+
+    box-shadow:
+        0 0 0 .25rem rgba(255,193,7,.2);
 }
 
-/* CORREÇÃO 2: Alterado de .btn-primary para .btn-warning para bater com o seu HTML */
+/* =====================================================
+   SELECT
+===================================================== */
+
+select.form-control {
+    background-image:
+        url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23334155' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px 12px;
+
+    appearance: none;
+}
+
+/* =====================================================
+   BOTÕES
+===================================================== */
+
 .btn-warning {
     background-color: #ffc107 !important;
     border-color: #ffc107 !important;
-    color: black !important;
-    font-weight: bold;
+
+    color: #000 !important;
+    font-weight: 600;
+
+    border-radius: 12px;
 }
 
-/* Adicionado um efeito hover básico para o botão não ficar estático */
 .btn-warning:hover {
     background-color: #e0a800 !important;
-    border-color: #d39e00 !important;
+    border-color: #e0a800 !important;
 }
 
-/* ==========================================================================
-   INTEGRAÇÃO DA TELA DE PRODUTOS COM O TEMA DARK/SLATE DO PROJETO
-   ========================================================================== */
-
-/* Define o fundo escuro do sistema para combinar com o .painel-principal */
-.body-sistema-pizzaria {
-    background-color: #0b1320; /* Tom azul-escuro combinando com o gradiente do seu hero */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.btn-primary {
+    border-radius: 12px;
 }
 
-/* Garante que o select herde exatamente as mesmas propriedades que você definiu para os inputs */
-select.form-control {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 16px 12px;
-    appearance: none;
+.btn-danger {
+    border-radius: 12px;
+}
+
+/* =====================================================
+   TABELAS
+===================================================== */
+
+.table {
+    --bs-table-bg: transparent;
+
+    color: #334155;
+}
+
+.table th {
+    color: #f59e0b !important;
+    font-weight: 700;
+}
+
+.table td {
+    color: #334155 !important;
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* =====================================================
+   TOKEN JWT
+===================================================== */
+
+#tokenSwagger {
+    background: #1e293b;
+    color: white;
+    border: none;
+}
+
+#tokenSwagger::placeholder {
+    color: #cbd5e1;
+}
+
+/* =====================================================
+   PRODUTOS
+===================================================== */
+
+#listaProdutos .card {
+    overflow: hidden;
+}
+
+#listaProdutos img {
+    height: 220px;
+    object-fit: cover;
+}
+
+/* =====================================================
+   RESPONSIVO
+===================================================== */
+
+@media (max-width: 768px) {
+
+    .hero {
+        height: 280px;
+    }
+
+    .hero-overlay h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-overlay p {
+        font-size: 1rem;
+    }
+
+    .painel-principal {
+        margin-top: -40px;
+    }
+
+    .nav-pills {
+        gap: 10px;
+    }
 }
 
 /* ===== CARDÁPIO BASE ===== */

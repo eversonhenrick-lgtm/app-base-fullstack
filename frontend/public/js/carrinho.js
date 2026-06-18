@@ -208,6 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     clienteId: payload.id,
 
                     itens: itensFormatados,
+                    
+                    clienteNome: payload.nome,
 
                     total: Number(total), // 🔥 FIX
 

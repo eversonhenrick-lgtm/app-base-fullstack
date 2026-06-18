@@ -116,6 +116,18 @@ async function getUsuarioById(req, res) {
 // ➕ CRIAR USUÁRIO
 async function createUsuario(req, res) {
     try {
+
+        const usuarioExistente = await db
+            .collection("usuarios")
+            .where("email", "==", req.body.email)
+            .get();
+
+        if (!usuarioExistente.empty) {
+            return res.status(400).send({
+                error: "Já existe um funcionário com este e-mail"
+            });
+        }
+
         const novoUsuario = {
             nome: req.body.nome,
             email: req.body.email,
@@ -132,6 +144,7 @@ async function createUsuario(req, res) {
         });
 
     } catch (err) {
+
         res.status(500).send({
             error: "Erro ao cadastrar usuário"
         });

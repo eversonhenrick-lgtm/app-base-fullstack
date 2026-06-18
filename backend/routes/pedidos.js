@@ -34,6 +34,8 @@ var verificarToken = require('../middleware/auth');
  *             properties:
  *               clienteId:
  *                 type: string
+ *               clienteNome:
+ *                 type: string
  *               itens:
  *                 type: array
  *                 items:
@@ -45,9 +47,6 @@ var verificarToken = require('../middleware/auth');
  *                       type: integer
  *                     preco:
  *                       type: number
- *     responses:
- *       201:
- *         description: Pedido criado com sucesso
  *
  * /pedidos/{id}:
  *   get:

@@ -87,6 +87,8 @@ router.get('/cardapio', async (req, res) => {
  *                 type: string
  *               senha:
  *                 type: string
+ *               ibge:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Cliente criado com sucesso
@@ -137,6 +139,8 @@ router.get('/cardapio', async (req, res) => {
  *                 type: string
  *               senha:
  *                 type: string
+ *               ibge:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Cliente atualizado com sucesso
@@ -175,7 +179,7 @@ router.get('/:id', function(req, res) {
   clienteModel.getClienteById(req, res);
 });
 
-router.post('/', verificarToken, function(req, res) {
+router.post('/', function(req, res) {
   clienteModel.createCliente(req, res);
 });
 

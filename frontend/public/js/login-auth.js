@@ -35,4 +35,29 @@ document.getElementById('formLogin').addEventListener('submit', async (event) =>
         console.error('Erro na comunicação com a API:', erro);
         alert('Não foi possível conectar ao servidor principal.');
     }
+
+    
 });
+
+window.mostrarCadastro = function () {
+    const login = document.getElementById('loginBox');
+    const cadastro = document.getElementById('cadastroBox');
+
+    if (!login || !cadastro) return;
+
+    // esconde login
+    login.style.display = 'none';
+
+    // mostra cadastro
+    cadastro.style.display = 'block';
+};
+
+window.mostrarLogin = function () {
+    const login = document.getElementById('loginBox');
+    const cadastro = document.getElementById('cadastroBox');
+
+    if (!login || !cadastro) return;
+
+    cadastro.style.display = 'none';
+    login.style.display = 'block';
+};

@@ -6,10 +6,19 @@ const pedidosRef = db.collection("pedidos");
 // ➕ CRIAR PEDIDO
 async function createPedido(req, res) {
     try {
+
+        const itens = req.body.itens || [];
+
+        // 🔥 cálculo no backend (FONTE OFICIAL)
+        const total = itens.reduce((acc, item) => {
+            return acc + (item.preco * item.quantidade);
+        }, 0);
+
         const novoPedido = {
             clienteId: req.body.clienteId,
-            itens: req.body.itens,
-            total: req.body.total,
+            clienteNome: req.body.clienteNome,
+            itens: itens,
+            total: total,
             status: "pendente",
             criadoEm: new Date()
         };

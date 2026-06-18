@@ -71,7 +71,7 @@ async function getClientes(req, res) {
 
         snapshot.forEach(doc => {
             clientes.push({
-                id: doc.id,
+                id: doc.id,        // ✔️ ESSENCIAL
                 ...doc.data()
             });
         });
@@ -116,17 +116,24 @@ async function getClienteById(req, res) {
 // Criar cliente 
 async function createCliente(req, res) {
     try {
+        const { nome, telefone, endereco, email, senha } = req.body;
+
+        if (!nome || !email || !senha) {
+            return res.status(400).send({
+                error: "Nome, email e senha são obrigatórios"
+            });
+        }
+
         const novoCliente = {
-            nome: req.body.nome,
-            telefone: req.body.telefone,
-            endereco: req.body.endereco,
-            email: req.body.email,
-            senha: req.body.senha
+            nome,
+            telefone: telefone || "",
+            endereco: endereco || "",
+            email,
+            senha,
+            ibge: req.body.ibge || ""
         };
 
-        const docRef = await db
-            .collection('clientes')
-            .add(novoCliente);
+        const docRef = await db.collection('clientes').add(novoCliente);
 
         res.status(201).send({
             id: docRef.id,
@@ -134,6 +141,7 @@ async function createCliente(req, res) {
         });
 
     } catch (err) {
+        console.error(err);
         res.status(500).send({
             error: "Erro ao cadastrar cliente"
         });
